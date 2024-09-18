@@ -1,6 +1,5 @@
 import Foundation
 
-#if canImport(SwiftSyntax509)
   @_spi(Internals) import SnapshotTesting
   import SwiftParser
   import SwiftSyntax
@@ -194,25 +193,6 @@ import Foundation
       }
     }
   }
-#else
-  @available(*, unavailable, message: "'assertInlineSnapshot' requires 'swift-syntax' >= 509.0.0")
-  public func assertInlineSnapshot<Value>(
-    of value: @autoclosure () throws -> Value?,
-    as snapshotting: Snapshotting<Value, String>,
-    message: @autoclosure () -> String = "",
-    record isRecording: Bool? = nil,
-    timeout: TimeInterval = 5,
-    syntaxDescriptor: InlineSnapshotSyntaxDescriptor = InlineSnapshotSyntaxDescriptor(),
-    matches expected: (() -> String)? = nil,
-    fileID: StaticString = #fileID,
-    file filePath: StaticString = #filePath,
-    function: StaticString = #function,
-    line: UInt = #line,
-    column: UInt = #column
-  ) {
-    fatalError()
-  }
-#endif
 
 /// A structure that describes the location of an inline snapshot.
 ///
@@ -273,7 +253,6 @@ public struct InlineSnapshotSyntaxDescriptor: Hashable {
     self.trailingClosureOffset = trailingClosureOffset
   }
 
-  #if canImport(SwiftSyntax509)
     /// Generates a test failure immediately and unconditionally at the described trailing closure.
     ///
     /// This method will attempt to locate the line of the trailing closure described by this type
@@ -320,23 +299,10 @@ public struct InlineSnapshotSyntaxDescriptor: Hashable {
     fileprivate func contains(_ label: String) -> Bool {
       self.trailingClosureLabel == label || self.deprecatedTrailingClosureLabels.contains(label)
     }
-  #else
-    @available(*, unavailable, message: "'assertInlineSnapshot' requires 'swift-syntax' >= 509.0.0")
-    public func fail(
-      _ message: @autoclosure () -> String = "",
-      fileID: StaticString,
-      file filePath: StaticString,
-      line: UInt,
-      column: UInt
-    ) {
-      fatalError()
-    }
-  #endif
 }
 
 // MARK: - Private
 
-#if canImport(SwiftSyntax509)
   private let installTestObserver: Void = {
     final class InlineSnapshotObserver: NSObject, XCTestObservation {
       func testBundleDidFinish(_ testBundle: Bundle) {
@@ -753,4 +719,3 @@ public struct InlineSnapshotSyntaxDescriptor: Hashable {
       return hashCount
     }
   }
-#endif
